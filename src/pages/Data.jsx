@@ -121,11 +121,44 @@ const Data = () => {
             orders: ordersByDay[day]
         }));
 
+        // --- C.2 DYNAMIC MONTHLY TREND (4 WEEKS OF CURRENT MONTH) ---
+        const now = new Date();
+        const currentMonth = now.getMonth();
+        const currentYear = now.getFullYear();
+
+        const weeklySalesMap = {
+            'Week 1': 0, // Days 1-7
+            'Week 2': 0, // Days 8-14
+            'Week 3': 0, // Days 15-21
+            'Week 4': 0  // Days 22+
+        };
+
+        validOrders.forEach(order => {
+            const orderDate = new Date(order.createdAt);
+            
+            // Only add up orders that happened in the CURRENT month and year
+            if (!isNaN(orderDate) && orderDate.getMonth() === currentMonth && orderDate.getFullYear() === currentYear) {
+                const dayOfMonth = orderDate.getDate();
+                const total = order.bills?.total || 0;
+
+                // Group the real revenue into the correct week
+                if (dayOfMonth >= 1 && dayOfMonth <= 7) {
+                    weeklySalesMap['Week 1'] += total;
+                } else if (dayOfMonth >= 8 && dayOfMonth <= 14) {
+                    weeklySalesMap['Week 2'] += total;
+                } else if (dayOfMonth >= 15 && dayOfMonth <= 21) {
+                    weeklySalesMap['Week 3'] += total;
+                } else {
+                    weeklySalesMap['Week 4'] += total; // Days 22 to 31
+                }
+            }
+        });
+
         const monthlySalesData = [
-            { name: 'Week 1', sales: totalRevenue * 0.22 },
-            { name: 'Week 2', sales: totalRevenue * 0.28 },
-            { name: 'Week 3', sales: totalRevenue * 0.25 },
-            { name: 'Week 4', sales: totalRevenue * 0.25 },
+            { name: 'Week 1', sales: weeklySalesMap['Week 1'] },
+            { name: 'Week 2', sales: weeklySalesMap['Week 2'] },
+            { name: 'Week 3', sales: weeklySalesMap['Week 3'] },
+            { name: 'Week 4', sales: weeklySalesMap['Week 4'] }
         ];
 
         // --- D. CATEGORY ENGINE WITH RESTORE LOGIC ---
@@ -213,7 +246,7 @@ const Data = () => {
 
     return (
         <div className="bg-[#1f1f1f] h-[calc(100vh-5rem)]">
-            <main className="h-full overflow-y-auto p-6 text-white pb-20">
+            <main className="h-full overflow-y-auto p-6 text-white pb-20 custom-scroll">
                 <div className='container mx-auto'>
                     <div className='flex items-center justify-between mb-8'>
                         <h1 className="text-3xl font-bold text-[#f5f5f5]">Data Analytics</h1>
