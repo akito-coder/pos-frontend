@@ -249,7 +249,7 @@ const Data = () => {
             <main className="h-full overflow-y-auto p-6 text-white pb-20 custom-scroll">
                 <div className='container mx-auto'>
                     <div className='flex items-center justify-between mb-8'>
-                        <h1 className="text-3xl font-bold text-[#f5f5f5]">Data Analytics</h1>
+                        <h1 className="text-3xl font-bold text-[#f5f5f5]">Data Analytics (Live)</h1>
                         <div className='flex items-center gap-3'>
                             {tabs.map((tab) => (
                                 <button key={tab} className={`px-6 py-2 rounded-lg font-semibold text-md transition-colors duration-200 ${activeTab === tab ? "bg-[#f6b100] text-[#1a1a1a]" : "bg-[#262626] text-[#f5f5f5] hover:bg-[#333]"}`} onClick={() => setActiveTab(tab)}>
